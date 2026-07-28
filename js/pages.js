@@ -225,6 +225,11 @@ export function wireTransactions() {
     const all = drawer.querySelector('input[name="segmented"][value="All"]');
     if (all) all.checked = true;
     drawer.querySelectorAll('input[name="date-preset"]').forEach((i) => (i.checked = false));
+    // Clear the Custom date-range calendar's visual selection
+    drawer.querySelectorAll(".cal-cell").forEach((c) =>
+      c.classList.remove("in-range", "range-start", "range-end")
+    );
+    drawer.querySelectorAll(".dr-summary .dr-val").forEach((v) => (v.textContent = "Select date"));
     rangeInputs[0] && (rangeInputs[0].value = rMin);
     rangeInputs[1] && (rangeInputs[1].value = rMax);
     const last4 = drawer.querySelector(".fd-block .fd-text");
