@@ -125,6 +125,12 @@ function render(route) {
   main.innerHTML = currentRoutePage(route);
   main.scrollTop = 0;
   window.scrollTo(0, 0);
+  // Re-trigger the page-enter animation on every route change
+  main.classList.remove("page-enter");
+  void main.offsetWidth; // force reflow so the animation restarts
+  main.classList.add("page-enter");
+  clearTimeout(main._peTimer);
+  main._peTimer = setTimeout(() => main.classList.remove("page-enter"), 600);
   setActive(route);
   wireContentEvents();
   if (pages.wireTransactions) pages.wireTransactions();
