@@ -565,15 +565,15 @@ table.tbl tbody tr:last-child td { border-bottom: none; }
 /* ============================= Motion ============================= */
 /* Page enter — fade + gentle rise on route change */
 @keyframes pageEnter {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 .main.page-enter { animation: pageEnter var(--dur-slow) var(--ease-out); }
 
 /* Table rows — subtle staggered fade-in when a table renders */
 @keyframes rowEnter {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 table.tbl tbody tr { animation: rowEnter var(--dur) var(--ease-out) both; }
 .main:not(.page-enter) table.tbl tbody tr { animation: none; }
