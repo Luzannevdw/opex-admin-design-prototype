@@ -570,24 +570,6 @@ table.tbl tbody tr:last-child td { border-bottom: none; }
 }
 .main.page-enter { animation: pageEnter var(--dur-slow) var(--ease-out); }
 
-/* Table rows — subtle staggered fade-in when a table renders */
-@keyframes rowEnter {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-table.tbl tbody tr { animation: rowEnter var(--dur) var(--ease-out) both; }
-.main:not(.page-enter) table.tbl tbody tr { animation: none; }
-table.tbl tbody tr:nth-child(1)  { animation-delay: 10ms; }
-table.tbl tbody tr:nth-child(2)  { animation-delay: 25ms; }
-table.tbl tbody tr:nth-child(3)  { animation-delay: 40ms; }
-table.tbl tbody tr:nth-child(4)  { animation-delay: 55ms; }
-table.tbl tbody tr:nth-child(5)  { animation-delay: 70ms; }
-table.tbl tbody tr:nth-child(6)  { animation-delay: 85ms; }
-table.tbl tbody tr:nth-child(7)  { animation-delay: 100ms; }
-table.tbl tbody tr:nth-child(8)  { animation-delay: 115ms; }
-table.tbl tbody tr:nth-child(9)  { animation-delay: 130ms; }
-table.tbl tbody tr:nth-child(n+10) { animation-delay: 145ms; }
-
 /* Nav links + group headers — smooth hover + press */
 .nav-link, .nav-group-header {
   transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
