@@ -224,8 +224,7 @@ export function wireTransactions() {
     drawer.querySelectorAll('.fd-toggles input').forEach((i) => (i.checked = false));
     const all = drawer.querySelector('input[name="segmented"][value="All"]');
     if (all) all.checked = true;
-    const def = drawer.querySelector('input[name="date-preset"][value="Last 30 days"]');
-    if (def) def.checked = true;
+    drawer.querySelectorAll('input[name="date-preset"]').forEach((i) => (i.checked = false));
     rangeInputs[0] && (rangeInputs[0].value = rMin);
     rangeInputs[1] && (rangeInputs[1].value = rMax);
     const last4 = drawer.querySelector(".fd-block .fd-text");
