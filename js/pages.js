@@ -260,19 +260,55 @@ function rebindTable(container) {
 
 export function transactionDetailsPage() {
   const d = D.transactionDetail;
-  return pageHeader("Transaction details") +
-    `<button class="btn btn-text" data-nav="transactions" style="margin-bottom:12px;">${icon("arrow_back")} Back to transactions</button>` +
+
+  const steps = [
+    { label: "Authorised", time: d.date, state: "done", icon: "check" },
+    { label: "Captured", time: "2026-07-27 14:32:07", state: "done", icon: "check" },
+    { label: "Settled", time: "Expected 2026-07-28", state: "todo", icon: "clock" },
+  ];
+  const timeline = `<ol class="tx-timeline">${steps
+    .map((s) => `<li class="tx-step ${s.state}">
+        <span class="tx-step-dot">${icon(s.icon)}</span>
+        <span class="tx-step-label">${s.label}</span>
+        <span class="tx-step-time">${s.time}</span>
+      </li>`)
+    .join("")}</ol>`;
+
+  const hero = `<div class="paper outlined tx-hero">
+      <div class="tx-hero-main">
+        <div class="tx-hero-eyebrow">${d.type} · ${d.product}</div>
+        <div class="tx-hero-amount">${money(d.amount, d.currency)}</div>
+        <div class="tx-hero-chips">
+          ${statusChip(d.status)}${chip(d.scheme)}${chip(d.entryMode)}
+        </div>
+        <div class="tx-hero-id">${copyCell(d.id)}</div>
+      </div>
+      <div class="tx-hero-actions">
+        <button class="btn btn-outlined">${icon("swap_horiz")} Reverse</button>
+        <button class="btn btn-filled">${icon("assignment_return")} Refund</button>
+      </div>
+    </div>`;
+
+  return `<div class="tx-detail">` +
+    `<div class="tx-detail-head">` +
+    `<button class="btn btn-text tx-back" data-nav="transactions">${icon("arrow_back")} Back to transactions</button>` +
+    pageHeader("Transaction details") +
+    `</div>` +
+    `<div class="tx-top">` +
+    hero +
+    card("Lifecycle", timeline, "tx-lifecycle") +
+    `</div>` +
     `<div class="grid-2">` +
-    card("Overview", detailGrid([
-      ["Transaction ID", copyCell(d.id)], ["Status", statusChip(d.status)],
-      ["Amount", `<b>${money(d.amount, d.currency)}</b>`], ["Type", chip(d.type)],
-      ["Product", chip(d.product)], ["Scheme", d.scheme], ["Date time", d.date], ["Entry mode", d.entryMode],
+    card("Transaction", detailGrid([
+      ["Type", chip(d.type)], ["Product", chip(d.product)], ["Scheme", d.scheme],
+      ["Entry mode", d.entryMode], ["Date time", d.date], ["Auth code", d.authCode],
+      ["Card last 4", `•••• ${d.cardLast4}`], ["ARN", copyCell(d.arn)],
     ])) +
     card("Merchant & terminal", detailGrid([
       ["Merchant", d.merchantName], ["Merchant ID", copyCell(d.merchantId)],
       ["Location ID", copyCell(d.locationId)], ["Terminal ID", copyCell(d.terminalId)],
-      ["MCC", d.mcc], ["Card last 4", `•••• ${d.cardLast4}`], ["Auth code", d.authCode], ["ARN", copyCell(d.arn)],
-    ])) + `</div>`;
+      ["MCC", d.mcc],
+    ])) + `</div>` + `</div>`;
 }
 
 // ========================================================== Settlements

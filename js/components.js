@@ -369,7 +369,6 @@ export function searchToolbar({ placeholder = "Search", showFilters = false, req
         ${hasPanel
           ? `<label class="btn btn-outlined filters-trigger" for="filters-open">${icon("faders")} Filters ${count ? `<span class="count-badge">${count}</span>` : ""}</label>`
           : (showFilters ? `<label class="switch"><input type="checkbox" role="switch" /> Show additional filters</label>` : "")}
-        <div class="spacer"></div>
         ${hasPanel ? `<button class="btn btn-filled">Search</button>` : (btnRow(actions) || `<button class="btn btn-filled">Search</button>`)}
       </div>
       ${hasPanel ? filtersDrawer(filters) : ""}
@@ -386,7 +385,7 @@ export function card(title, inner, extraClass = "") {
 
 export function detailGrid(pairs) {
   return `<div class="detail-grid">${pairs
-    .map(([k, v]) => `<div class="k">${k}</div><div class="v">${v}</div>`)
+    .map(([k, v]) => `<div class="detail-row"><div class="k">${k}</div><div class="v">${v}</div></div>`)
     .join("")}</div>`;
 }
 
