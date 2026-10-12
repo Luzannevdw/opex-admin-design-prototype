@@ -14,6 +14,63 @@ export function home() {
   return `<div class="home-view">
       <div class="h3">Hello, Designer! 👋🏼</div>
       <div class="subtitle1 muted">Welcome to Opex UI — feel free to browse around!</div>
+      <button class="btn btn-outlined home-feedback-trigger" type="button" data-open-feedback>Share feedback</button>
+      <dialog class="feedback-card" id="feedback-survey" aria-labelledby="feedback-title">
+        <form class="feedback-survey">
+          <header class="feedback-header">
+            <div class="feedback-heading">
+              ${icon("feedback", "feedback-heading-icon")}
+              <div>
+                <h2 id="feedback-title" tabindex="-1">Feedback form</h2>
+                <p class="feedback-eyebrow" data-feedback-progress>Step 1 of 2</p>
+              </div>
+            </div>
+            <button class="feedback-close" type="button" data-feedback-close aria-label="Close feedback survey">${icon("close")}</button>
+          </header>
+
+          <section data-feedback-step="1" aria-labelledby="feedback-rating-question">
+            <div class="feedback-intro">
+              ${icon("check")}
+              <span>A quick rating, then a couple of questions.</span>
+            </div>
+            <h2 class="feedback-question" id="feedback-rating-question" tabindex="-1">How likely are you to recommend OpEx UI to a colleague?</h2>
+            <fieldset class="feedback-fieldset" aria-labelledby="feedback-rating-question">
+              <legend class="sr-only">Select a rating from 0 to 10</legend>
+              <div class="feedback-rating">
+                ${Array.from({ length: 11 }, (_, n) => `<label><input type="radio" name="rating" value="${n}"><span>${n}</span></label>`).join("")}
+              </div>
+              <div class="feedback-scale-labels"><span>Not at all likely</span><span>Extremely likely</span></div>
+            </fieldset>
+            <div class="feedback-actions"><button class="btn btn-filled" type="button" data-feedback-next disabled>Next</button></div>
+          </section>
+
+          <section data-feedback-step="2" aria-labelledby="feedback-issues-question" hidden>
+            <h2 class="feedback-question" id="feedback-issues-question" tabindex="-1">What isn’t working well for you?</h2>
+            <p class="feedback-required" id="feedback-issue-hint">Select at least one.</p>
+            <fieldset class="feedback-fieldset" aria-labelledby="feedback-issues-question" aria-describedby="feedback-issue-hint" aria-required="true">
+              <legend class="sr-only">Select at least one issue</legend>
+              <div class="feedback-options">
+                ${["Finding information", "Speed and performance", "Navigation", "Completing tasks", "Errors or bugs", "Nothing in particular"]
+                  .map((option) => `<label><input type="checkbox" name="issue" value="${option}"><span>${option}</span></label>`).join("")}
+              </div>
+            </fieldset>
+            <label class="feedback-question feedback-text-label" for="feedback-message">Anything else you’d like to share?</label>
+            <p class="feedback-required" id="feedback-message-hint">Required</p>
+            <textarea id="feedback-message" name="message" rows="4" required aria-describedby="feedback-message-hint" placeholder="Tell us what could be better, what’s working well, or any ideas you have."></textarea>
+            <div class="feedback-actions">
+              <button class="btn btn-outlined" type="button" data-feedback-back>Back</button>
+              <button class="btn btn-filled" type="button" data-feedback-submit disabled>Submit</button>
+            </div>
+          </section>
+
+          <section class="feedback-thanks" data-feedback-step="thanks" hidden>
+            <span class="feedback-success-mark" aria-hidden="true">${icon("check")}</span>
+            <h2 class="feedback-question" tabindex="-1">Thanks for sharing.</h2>
+            <p>Your feedback helps us improve OpEx UI.</p>
+            <div class="feedback-actions"><button class="btn btn-text" type="button" data-feedback-close>Close</button></div>
+          </section>
+        </form>
+      </dialog>
     </div>`;
 }
 

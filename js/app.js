@@ -54,6 +54,7 @@ const routes = {
   "roles-and-permissions": pages.rolesPage,
   "feedback": pages.feedbackPage,
 };
+let openFeedbackAfterRender = false;
 
 function navLink(link) {
   const labels = `<span class="link-labels"><span>${link.text}</span>${
@@ -87,7 +88,7 @@ function renderDrawer() {
     <div class="nav-footer-wrap">
       <div class="nav-divider"></div>
       <div class="nav-footer">
-        <button class="btn btn-text">${icon("feedback")} Feedback</button>
+        <button class="btn btn-text" type="button" data-open-feedback>${icon("feedback")} Feedback</button>
         <button class="btn btn-outlined">${icon("lock_open")} Change Access</button>
         <button class="btn btn-filled">${icon("logout")} Log out</button>
       </div>
@@ -133,6 +134,10 @@ function render(route) {
   main._peTimer = setTimeout(() => main.classList.remove("page-enter"), 600);
   setActive(route);
   wireContentEvents();
+  if (route === "home" && openFeedbackAfterRender) {
+    openFeedbackAfterRender = false;
+    openFeedback();
+  }
   if (pages.wireTransactions) pages.wireTransactions();
 }
 
@@ -145,6 +150,10 @@ function toast(msg) {
 }
 
 function wireContentEvents() {
+  if (document.getElementById("feedback-survey")) wireFeedback();
+  document.querySelectorAll("#main [data-open-feedback]").forEach((button) => {
+    button.addEventListener("click", openFeedback);
+  });
   // Row / element navigation
   document.querySelectorAll("[data-nav]").forEach((el) => {
     el.addEventListener("click", () => navigate(el.dataset.nav));
@@ -165,6 +174,7 @@ function wireContentEvents() {
 }
 
 function wireShellEvents() {
+  document.querySelector("#drawer [data-open-feedback]").addEventListener("click", openFeedback);
   // Group expand/collapse
   document.querySelectorAll(".nav-group-header").forEach((h) => {
     h.addEventListener("click", () => h.parentElement.classList.toggle("open"));
@@ -179,6 +189,75 @@ function wireShellEvents() {
         navigate(href);
       }
     });
+  });
+}
+
+function openFeedback() {
+  const survey = document.getElementById("feedback-survey");
+  if (!survey) {
+    openFeedbackAfterRender = true;
+    navigate("home");
+    return;
+  }
+  survey.showModal();
+}
+
+function wireFeedback() {
+  const survey = document.getElementById("feedback-survey");
+  const steps = [...survey.querySelectorAll("[data-feedback-step]")];
+  const progress = survey.querySelector("[data-feedback-progress]");
+  const rating = survey.querySelectorAll('input[name="rating"]');
+  const next = survey.querySelector("[data-feedback-next]");
+  const submit = survey.querySelector("[data-feedback-submit]");
+  const message = survey.querySelector("#feedback-message");
+  const options = [...survey.querySelectorAll('input[name="issue"]')];
+  const nothing = options.find((option) => option.value === "Nothing in particular");
+
+  function updateSubmit() {
+    submit.disabled = !options.some((option) => option.checked) || !message.value.trim();
+  }
+
+  function showStep(step) {
+    steps.forEach((panel) => { panel.hidden = panel.dataset.feedbackStep !== step; });
+    progress.hidden = step === "thanks";
+    if (step !== "thanks") progress.textContent = `Step ${step} of 2`;
+    steps.find((panel) => panel.dataset.feedbackStep === step).querySelector("h2").focus();
+  }
+
+  survey.querySelector("form").addEventListener("submit", (event) => event.preventDefault());
+  rating.forEach((input) => {
+    input.addEventListener("change", () => { next.disabled = false; });
+  });
+  options.forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) {
+        if (input === nothing) {
+          options.filter((option) => option !== nothing).forEach((option) => { option.checked = false; });
+        } else {
+          nothing.checked = false;
+        }
+      }
+      updateSubmit();
+    });
+  });
+  message.addEventListener("input", updateSubmit);
+  survey.querySelector("[data-feedback-next]").addEventListener("click", () => {
+    if (survey.querySelector('input[name="rating"]:checked')) showStep("2");
+  });
+  survey.querySelector("[data-feedback-back]").addEventListener("click", () => showStep("1"));
+  submit.addEventListener("click", () => {
+    if (survey.querySelector('input[name="rating"]:checked') && !submit.disabled) showStep("thanks");
+  });
+  survey.querySelectorAll("[data-feedback-close]").forEach((button) => {
+    button.addEventListener("click", () => survey.close());
+  });
+  survey.addEventListener("close", () => {
+    survey.querySelector("form").reset();
+    next.disabled = true;
+    submit.disabled = true;
+    steps.forEach((panel) => { panel.hidden = panel.dataset.feedbackStep !== "1"; });
+    progress.hidden = false;
+    progress.textContent = "Step 1 of 2";
   });
 }
 

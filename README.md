@@ -50,6 +50,11 @@ by the same sections as the real nav:
 Table columns and form fields were taken from the real `.razor` pages so the layouts are
 faithful; all row data is fake.
 
+Home's **Share feedback** button opens a two-step feedback pop-up; the drawer's
+Feedback button opens it too. A rating, at least one follow-up selection, and a
+written response are required before submission. Submitting shows a thank-you
+message. This is a design-only interaction: answers are not sent or stored.
+
 ## How to run
 
 It's just static files. Easiest is a tiny local web server (needed because it uses ES
