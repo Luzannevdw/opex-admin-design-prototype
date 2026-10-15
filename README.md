@@ -21,7 +21,12 @@ concrete ideas with the developers.
 - **Navigation** — the full drawer from `NavigationLinks.cs`: Home + Transactions on the
   top shelf, then the 10 grouped sections (Settlements, Payments, Transaction API,
   Account Management, Payment Operations, Terminals, Integrations, Embedded Finance,
-  Tools, Admin Fun) with matching Phosphor icons.
+  Tools, Admin Fun) with matching Phosphor icons. The drawer uses the Dojo design
+  system's dark navigation colours and 20px icons. Selecting a group opens its first
+  page, collapses the drawer to an icon rail, and shows the group's links in an adjacent
+  light NavSidebar-style panel. Hovering over the rail or using its expand control
+  opens the full navigation over the secondary panel without moving the page.
+  The rail expands with spring-like motion while labels slide and appear in place.
 - **Component patterns** — cursor-paged tables, filter toolbars, chips, copy-to-clipboard
   cells, detail grids — matching pages like `TransactionsTable.razor` and `Users.razor`.
 
