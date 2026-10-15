@@ -55,7 +55,6 @@ const routes = {
   "feedback": pages.feedbackPage,
 };
 let openFeedbackAfterRender = false;
-let navExpanded = true;
 
 function navLink(link) {
   const labels = `<span class="link-labels"><span>${link.text}</span>${
@@ -64,58 +63,22 @@ function navLink(link) {
   return `<a class="nav-link" href="#${link.href}" data-href="${link.href}" aria-label="${link.text}" title="${link.text}">${icon(link.icon)}${labels}</a>`;
 }
 
-function navGroup(group) {
+function navGroup(group, index) {
   return `
-    <button class="nav-group-header" type="button" data-group="${group.title}"
-      aria-label="${group.title}" title="${group.title}" aria-controls="nav-sidebar" aria-expanded="false">
-      ${icon(group.icon)}<span class="nav-label">${group.title}</span>${icon("caret-right", "chevron")}
-    </button>`;
+    <div class="nav-group">
+      <button class="nav-group-header" type="button"
+        aria-label="${group.title}" title="${group.title}" aria-controls="nav-group-${index}" aria-expanded="false">
+        ${icon(group.icon)}<span class="nav-label">${group.title}</span>${icon("caret-right", "chevron")}
+      </button>
+      <div class="nav-group-body" id="nav-group-${index}" role="group" aria-label="${group.title}">
+        ${group.links.map(navLink).join("")}
+      </div>
+    </div>`;
 }
 
-function showSidebar(group) {
-  const sidebar = document.getElementById("nav-sidebar");
-  const drawer = document.getElementById("drawer");
-  drawer.parentElement.classList.toggle("collapsed", !!group || !navExpanded);
-  drawer.classList.toggle("collapsed", !navExpanded);
-  const toggle = drawer.querySelector(".nav-toggle");
-  toggle.setAttribute("aria-expanded", String(navExpanded));
-  toggle.setAttribute("aria-label", navExpanded ? "Collapse navigation" : "Expand navigation");
-  toggle.title = toggle.getAttribute("aria-label");
-  document.querySelectorAll(".nav-group-header").forEach((button) => {
-    const selected = button.dataset.group === group?.title;
-    button.classList.toggle("active", selected);
-    button.setAttribute("aria-expanded", String(selected));
-  });
-  sidebar.hidden = !group;
-  if (!group) {
-    sidebar.innerHTML = "";
-    delete sidebar.dataset.group;
-    return;
-  }
-  if (sidebar.dataset.group !== group.title) {
-    sidebar.innerHTML = `
-      <h2>${group.title}</h2>
-      <nav aria-label="${group.title}">
-        ${group.links.map((link) => `
-          <a class="nav-sidebar-link" href="#${link.href}" data-href="${link.href}">
-            <span>${link.text}</span>
-            ${link.subtext ? `<span class="subtext">${link.subtext}</span>` : ""}
-          </a>`).join("")}
-      </nav>`;
-    sidebar.dataset.group = group.title;
-    sidebar.querySelectorAll(".nav-sidebar-link").forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigate(link.dataset.href);
-      });
-    });
-  }
-  sidebar.querySelectorAll(".nav-sidebar-link").forEach((link) => {
-    const selected = link.dataset.href === location.hash.slice(1);
-    link.classList.toggle("active", selected);
-    if (selected) link.setAttribute("aria-current", "page");
-    else link.removeAttribute("aria-current");
-  });
+function setGroupOpen(group, open) {
+  group.classList.toggle("open", open);
+  group.querySelector(".nav-group-header").setAttribute("aria-expanded", String(open));
 }
 
 function renderDrawer() {
@@ -124,9 +87,6 @@ function renderDrawer() {
       <a data-href="home" style="display:flex;align-items:center;">
         <img class="brand-logo" src="assets/logo-opex.svg" alt="Dojo OPEX" />
       </a>
-      <button class="nav-toggle" type="button" aria-controls="nav-primary" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation">
-        ${icon("caret-up")}${icon("caret-down")}
-      </button>
     </div>
     <div class="nav-divider nav-header-divider" aria-hidden="true"></div>
     <nav class="nav" id="nav-primary" aria-label="Main navigation">
@@ -152,12 +112,16 @@ function currentRoutePage(route) {
 }
 
 function setActive(route) {
-  const group = groups.find((item) => item.links.some((link) => link.href === route));
-  navExpanded = !group;
   document.querySelectorAll(".nav-link").forEach((el) => {
-    el.classList.toggle("active", el.dataset.href === route);
+    const selected = el.dataset.href === route;
+    el.classList.toggle("active", selected);
+    if (selected) el.setAttribute("aria-current", "page");
+    else el.removeAttribute("aria-current");
   });
-  showSidebar(group);
+  document.querySelectorAll(".nav-group").forEach((group) => {
+    const selected = !!group.querySelector(`.nav-link.active`);
+    if (selected) setGroupOpen(group, true);
+  });
 }
 
 function navigate(route) {
@@ -221,24 +185,11 @@ function wireContentEvents() {
 }
 
 function wireShellEvents() {
-  const drawer = document.getElementById("drawer");
-  drawer.addEventListener("pointerleave", () => {
-    if (drawer.classList.contains("collapsed")) drawer.classList.add("hover-suppressed");
-  });
-  drawer.addEventListener("pointerenter", (event) => {
-    if (event.clientX < drawer.getBoundingClientRect().left + 80) {
-      drawer.classList.remove("hover-suppressed");
-    }
-  });
   document.querySelector("#drawer [data-open-feedback]").addEventListener("click", openFeedback);
-  document.querySelector(".nav-toggle").addEventListener("click", () => {
-    navExpanded = !navExpanded;
-    showSidebar(groups.find((group) => group.links.some((link) => link.href === location.hash.slice(1))));
-  });
   document.querySelectorAll(".nav-group-header").forEach((h) => {
     h.addEventListener("click", () => {
-      const group = groups.find((item) => item.title === h.dataset.group);
-      navigate(group.links[0].href);
+      const group = h.parentElement;
+      setGroupOpen(group, !group.classList.contains("open"));
     });
   });
   document.querySelectorAll("#drawer [data-href]").forEach((el) => {
