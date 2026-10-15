@@ -222,15 +222,6 @@ function wireContentEvents() {
 
 function wireShellEvents() {
   const drawer = document.getElementById("drawer");
-  const nav = document.getElementById("nav-primary");
-  const updateNavScrollFade = () => {
-    const remaining = Math.max(0, nav.scrollHeight - nav.clientHeight - nav.scrollTop);
-    nav.style.setProperty("--nav-fade-top", `${Math.min(32, nav.scrollTop)}px`);
-    nav.style.setProperty("--nav-fade-bottom", `${Math.min(32, remaining)}px`);
-  };
-  nav.addEventListener("scroll", updateNavScrollFade, { passive: true });
-  window.addEventListener("resize", updateNavScrollFade);
-  updateNavScrollFade();
   drawer.addEventListener("pointerleave", () => {
     if (drawer.classList.contains("collapsed")) drawer.classList.add("hover-suppressed");
   });

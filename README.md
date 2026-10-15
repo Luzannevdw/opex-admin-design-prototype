@@ -27,7 +27,6 @@ concrete ideas with the developers.
   light NavSidebar-style panel. Hovering over the rail or using its expand control
   opens the full navigation over the secondary panel without moving the page.
   The rail expands with spring-like motion while labels slide and appear in place.
-  Scrolled navigation items fade gently at the dividers without fading the divider lines.
 - **Component patterns** — cursor-paged tables, filter toolbars, chips, copy-to-clipboard
   cells, detail grids — matching pages like `TransactionsTable.razor` and `Users.razor`.
 

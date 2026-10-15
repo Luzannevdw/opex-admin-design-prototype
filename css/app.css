@@ -184,14 +184,10 @@ h1, h2, h3, h4, h5 { margin: 0; font-family: "dojo roobert medium"; }
 .drawer.collapsed:not(.hover-suppressed):hover .nav-toggle { transform: none; }
 
 .nav {
-  --nav-fade-top: 0px;
-  --nav-fade-bottom: 0px;
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 0 12px;
   min-height: 0;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--nav-fade-top), #000 calc(100% - var(--nav-fade-bottom)), transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 var(--nav-fade-top), #000 calc(100% - var(--nav-fade-bottom)), transparent);
 }
 .nav > :first-child { margin-top: 16px; }
 
